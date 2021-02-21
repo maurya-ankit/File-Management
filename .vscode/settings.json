@@ -1,6 +1,5 @@
 {
     "python.pythonPath": "venv/bin/python",
     "editor.fontFamily": "'Courier Prime', 'monospace', monospace, 'Droid Sans Fallback'",
-    "editor.fontSize": 16,
     "editor.formatOnSave": true
 }
