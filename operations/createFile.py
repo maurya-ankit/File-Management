@@ -3,7 +3,7 @@ import os
 def CreateFile(fileName : str):
     with open(fileName,"w"):
         pass
-    print("created Successfully")
+    return True
 
 
 if __name__ == "__main__":

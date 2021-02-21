@@ -24,3 +24,11 @@ pyaudio setup problem solution (Ubuntu OS) : [stackoverflow](https://stackoverfl
 - use data structure to store whole directory structure for optmising the operation
 - create log file for whatever going on
 - give voice feedback when process done
+
+> Some more operations needs to be added like
+
+```sh
+compressing a folder (zip/tar)
+uncompressing a file (unzip)
+launching some popular applications installed on system
+```
