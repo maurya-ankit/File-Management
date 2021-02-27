@@ -1,8 +1,12 @@
 import os
+import voiceResponse
 
-def CreateFile(fileName : str):
-    with open(fileName,"w"):
+
+def create_file(fileName: str):
+    with open(fileName, "w"):
         pass
+    voiceResponse.voice_response(
+        f"Sir, file named {fileName} was created successfully")
     return True
 
 
@@ -11,4 +15,4 @@ if __name__ == "__main__":
     # make/create a/the/one file [filename]
     if(data.startswith("make") or data.startswith("create")):
         filename = data.split(" ")[3]
-        CreateFile(fileName=filename)
+        create_file(fileName=filename)
