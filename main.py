@@ -1,8 +1,7 @@
-from operations.goBack import go_back
-import speech_recognition as sr
-import voiceResponse
 import time
-from tqdm import tqdm
+import voiceResponse
+import speech_recognition as sr
+
 #import preprocessing.extractMeaningful
 from preprocessing.extractMeaningful import extract_meaningful
 
@@ -14,15 +13,20 @@ from operations.listDir import list_dir
 from operations.moveFile import move_file
 from operations.renameFile import rename_file
 from operations.openFolder import open_folder
+from operations.goBack import go_back
+
 from mappings.filetype import file_type
 from mappings.filetype import filetypedict
 
 IsRunning = True
 isFirst = True
+
 while(IsRunning):
-    time.sleep( 0 if isFirst else 1)
-    isFirst=False
-    voiceResponse.voice_response("what can i do?")
+    time.sleep(0 if isFirst else 1)
+    isFirst = False
+
+    voiceResponse.voice_response("Hello sir, what can I do for you?")
+
     # obtain audio from the microphone
     r = sr.Recognizer()
     with sr.Microphone() as source:
@@ -33,17 +37,46 @@ while(IsRunning):
     try:
         transcript = r.recognize_google(audio).lower()
         print(transcript)
+
         command_array = extract_meaningful(transcript)
         print(extract_meaningful(transcript))
+
+        if command_array[0] == 'stop' or command_array[0] == 'pause' or command_array[0] == 'wait' or (command_array[0] == 'Take' and command_array[1] == 'rest'):
+            voiceResponse.voice_response(
+                "I am sleep in mode now, please say Resume to wake me up")
+            print("Sleep mode on, say Resume to resume!")
+
+            while True:
+                r_pause_state = sr.Recognizer()
+                with sr.Microphone() as source2:
+                    print("Listening quietly, will activate if Resume is heard !!!")
+                    r_pause_state.adjust_for_ambient_noise(source2)
+                    audio_pause_state = r_pause_state.listen(source2)
+
+                time.sleep(2)
+
+                transcript_pause_state = r_pause_state.recognize_google(
+                    audio).lower()
+                command_array_pause_state = extract_meaningful(transcript)
+
+                if 'start' in command_array_pause_state or 'resume' in command_array_pause_state:
+                    break
+
+            continue
+
         if("close" in command_array):
             IsRunning = False
             voiceResponse.voice_response("Thank you")
             break
+
         # Condition for file creation
-        if(command_array[0]=="open"):
-            status = "successfull" if open_folder(folderName=command_array[1]) else "unsuccessfull"
-        elif(transcript=="go back"):
+        if(command_array[0] == "open"):
+            status = "successfull" if open_folder(
+                folderName=command_array[1]) else "unsuccessfull"
+
+        elif(transcript == "go back"):
             status = "successfull" if go_back() else "unsuccessfull"
+
         elif(command_array[0] == "create" or command_array[0] == "make"):
             print("make ran")
 
@@ -54,7 +87,8 @@ while(IsRunning):
                 except:
                     extension = file_type = ""
                 filename = command_array[2]+extension
-                status = "successful" if create_file(filename) else "unsuccessful"
+                status = "successful" if create_file(
+                    filename) else "unsuccessful"
                 print(status)
 
             # Create folder/directory
@@ -73,7 +107,8 @@ while(IsRunning):
                 except:
                     extension = ""
                 filename = command_array[2]+extension
-                status = "successful" if delete_file(filename) else "unsuccessful"
+                status = "successful" if delete_file(
+                    filename) else "unsuccessful"
                 print(status)
 
             # Delete folder/directory
@@ -144,7 +179,8 @@ while(IsRunning):
                         src_extension = ""
                 dst = dst+dst_extension
                 src = src+src_extension
-                status = "successful" if rename_file(src, dst) else "unsuccessful"
+                status = "successful" if rename_file(
+                    src, dst) else "unsuccessful"
                 print(status)
 
             # Rename folder
@@ -154,7 +190,7 @@ while(IsRunning):
             print("this ran")
         else:
             voiceResponse.voice_response(
-            'Sorry sir, I could not understand you, please repeat.')
+                'Sorry sir, I could not understand you, please repeat.')
             continue
 
     except sr.UnknownValueError:
