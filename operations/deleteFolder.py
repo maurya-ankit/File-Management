@@ -15,6 +15,7 @@ def delete_folder(folderName: str):
         voiceResponse.voice_response(
             f"Directory named {rem_dir} was deleted successfully, Sir")
         print(f"{folderName} folder deleted successfully")
+        return True
     except FileNotFoundError as e:
         print(f'Error: {trash_dir} : {e.strerror}')
         voiceResponse.voice_response(

@@ -11,10 +11,12 @@ def delete_file(fileName: str):
         voiceResponse.voice_response(
             f"File named {remFile} was deleted successfully, Sir")
         print(f"{remFile} deleted successfully")
+        return True
     else:
         print(f'Error: {fileName} not a valid filename')
         voiceResponse.voice_response(
             f'Sorry sir, {fileName} is not a valid file name, operation failed')
+        return False
 
 
 if __name__ == "__main__":
