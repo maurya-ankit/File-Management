@@ -37,3 +37,28 @@ type_map = {
 # l2 = ["Create", "a", "file", "yahoo.c"]
 
 # print(l, l2)
+
+
+# import pyttsx3
+# import os
+
+# machine = pyttsx3.init()
+
+# print('say : ')
+
+# app = input('APP:')
+
+# if app == 'chrome' or app == 'google chrome':
+#     os.system('chrome')
+# elif app == 'telegram':
+#     os.system('telegram-desktop')
+# elif app == 'finder':
+#     os.system('finder')
+# elif app == 'firefox' or app == 'mozilla firefox' or app == 'mozilla':
+#     os.system('firefox')
+# elif app == 'android-studio':
+#     os.system('')
+# elif app == 'vs code':
+#     os.system('code')
+# elif app == 'pycharm':
+#     os.system('')

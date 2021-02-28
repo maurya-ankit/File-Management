@@ -2,7 +2,7 @@ import time
 import voiceResponse
 import speech_recognition as sr
 
-#import preprocessing.extractMeaningful
+# import preprocessing.extractMeaningful
 from preprocessing.extractMeaningful import extract_meaningful
 
 from operations.createFile import create_file
@@ -18,14 +18,17 @@ from operations.goBack import go_back
 from mappings.filetype import file_type
 from mappings.filetype import filetypedict
 
+from systemControls import sysControl
+
 IsRunning = True
 isFirst = True
 
 while(IsRunning):
+    if isFirst:
+        voiceResponse.voice_response("Hello sir, what can I do for you?")
+
     time.sleep(0 if isFirst else 1)
     isFirst = False
-
-    voiceResponse.voice_response("Hello sir, what can I do for you?")
 
     # obtain audio from the microphone
     r = sr.Recognizer()
@@ -41,7 +44,28 @@ while(IsRunning):
         command_array = extract_meaningful(transcript)
         print(extract_meaningful(transcript))
 
-        if command_array[0] == 'stop' or command_array[0] == 'pause' or command_array[0] == 'wait' or (command_array[0] == 'Take' and command_array[1] == 'rest'):
+        if command_array[0] == 'change' or command_array[0] == 'set':
+            obj = sysControl.SystemOperations()
+
+            if command_array[1] == 'volume':
+                new_volume = obj.change_volume(50)
+                voiceResponse.voice_response(
+                    "System volume is now set to " + str(new_volume) + "%")
+
+            # elif command_array[1] == 'brightness':
+            #     new_brightness = obj.change_brightness(50)
+            #     voiceResponse.voice_response(
+            #         "System volume is now set to " + str(new_brightness) + "%")
+
+        elif command_array[0] == 'shutdown':
+            obj2 = sysControl.SystemOperations()
+            obj2.sys_shutdown()
+
+        elif command_array[0] == 'restart':
+            obj3 = sysControl.SystemOperations()
+            obj3.sys_reboot()
+
+        elif command_array[0] == 'stop' or command_array[0] == 'pause' or command_array[0] == 'wait' or (command_array[0] == 'Take' and command_array[1] == 'rest'):
             voiceResponse.voice_response(
                 "I am sleep in mode now, please say Resume to wake me up")
             print("Sleep mode on, say Resume to resume!")
@@ -64,13 +88,13 @@ while(IsRunning):
 
             continue
 
-        if("close" in command_array):
+        elif("close" in command_array):
             IsRunning = False
             voiceResponse.voice_response("Thank you")
             break
 
         # Condition for file creation
-        if(command_array[0] == "open"):
+        elif(command_array[0] == "open"):
             status = "successfull" if open_folder(
                 folderName=command_array[1]) else "unsuccessfull"
 
