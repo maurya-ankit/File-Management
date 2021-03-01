@@ -1,3 +1,4 @@
+import sys
 import time
 import pyttsx3
 import voiceResponse
@@ -17,43 +18,57 @@ class AdminCenter(operations.Operations):
         jarvis.say(response)
         jarvis.runAndWait()
 
-    def auth(self, audio, r):
+    def voice_recog(self) -> str:
+        r2 = sr.Recognizer()
+        with sr.Microphone() as source2:
+            print("Say something!2")
+            r2.adjust_for_ambient_noise(source2)
+            audio2 = r2.listen(source2)
+
+        return r2.recognize_google(audio2).lower()
+
+    def ifNotFirst(self, transcript: str):
+        # transcript2 = self.voice_recog()  # r2.recognize_google(audio2).lower()
+        print("Your response: " + transcript)
+
+        command_array2 = extract_meaningful(transcript)
+        print("After segmentation: " + str(extract_meaningful(transcript)))
+
+        if command_array2[0] == 'close':
+            IsRunning = False
+            voiceResponse.voice_response("Thank you, sir, Shutting Down")
+            sys.exit()
+
+        else:
+            super().start_operation(command_array2)
+            # attempt = attempt + 1
+            # return attempt
+
+    def auth(self, isFirst: bool):
         try:
-            transcript = r.recognize_google(audio).lower()
+            transcript = self.voice_recog()  # r.recognize_google(audio).lower()
             print("Your response: " + transcript)
 
             command_array = extract_meaningful(transcript)
             print("After segmentation: " + str(extract_meaningful(transcript)))
 
-            if command_array[0] == 'kitretsu' or command_array[0] == 'ankit' or command_array[0] == 'ayush':
+            print(isFirst)
+
+            if isFirst and command_array[0] == 'kitretsu' or command_array[0] == 'ankit' or command_array[0] == 'ayush':
                 self.voice_response("Authorization successful")
                 time.sleep(0.002)
                 self.voice_response("Hello sir, what can I do for you")
                 time.sleep(0.001)
 
-                r2 = sr.Recognizer()
-                with sr.Microphone() as source2:
-                    print("Say something!2")
-                    r2.adjust_for_ambient_noise(source2)
-                    audio2 = r2.listen(source2)
+                new_transcript = self.voice_recog()
 
-                transcript2 = r2.recognize_google(audio2).lower()
-                print("Your response: " + transcript2)
+                self.ifNotFirst(new_transcript)
 
-                command_array2 = extract_meaningful(transcript2)
-                print("After segmentation: " +
-                      str(extract_meaningful(transcript2)))
-
-                if command_array2[0] == 'close':
-                    IsRunning = False
-                    voiceResponse.voice_response("Thank you")
-                else:
-                    super().start_operation(command_array2)
+            elif not isFirst and not command_array[0] == 'kitretsu' or not command_array[0] == 'ankit' or not command_array[0] == 'ayush':
+                self.voice_response("Authorization unsuccessful")
 
             else:
-                self.voice_response("Authorization unsuccessful")
-                # attempt = attempt + 1
-                # return attempt
+                self.ifNotFirst(transcript)
 
         except sr.UnknownValueError:
             print("Google could not understand audio")
@@ -77,18 +92,19 @@ class AdminCenter(operations.Operations):
             isFirst = False
 
             # obtain audio from the microphone
-            r = sr.Recognizer()
-            with sr.Microphone() as source:
-                print("Say something!")
-                r.adjust_for_ambient_noise(source)
-                audio = r.listen(source)
+            # r = sr.Recognizer()
+            # with sr.Microphone() as source:
+            #     print("Say something!")
+            #     r.adjust_for_ambient_noise(source)
+            #     audio = r.listen(source)
 
             # attempt = 1
 
             # while attempt <= 5:
             #     attempt = self.auth(audio, r, attempt)
 
-            self.auth(audio, r)
+            self.auth(isFirst)
+            #self.auth(audio, r, isFirst)
 
 
 obj = AdminCenter()
